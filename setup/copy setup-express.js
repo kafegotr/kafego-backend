@@ -50,6 +50,7 @@ export const initializeExpressApp = () => {
     }),
   );
 
+  /*
   const getMe = async (req) => {
     const token = req.cookies['refresh-token'];
     if (token) {
@@ -62,6 +63,7 @@ export const initializeExpressApp = () => {
       }
     }
   };
+  */
 
   const server = new ApolloServer({
     introspection: true,
@@ -70,9 +72,27 @@ export const initializeExpressApp = () => {
     context: async ({ req, res }) => {
       const me = getMe(req);
       return me;
+      /*
+      return {
+        me,
+        secret: REFRESH_TOKEN_SECRET,
+      };
+      */
+    /*
+      req,
+      res,
+      context: ({ req }) => {
+        const me = getMe(req);
+        return {
+          me,
+          secret: REFRESH_TOKEN_SECRET,
+        };
+      },
+    */
     },
   });
 
+  /*
   app.use((req, res, next) => {
     const accessToken = req.cookies['access-token'];
     try {
@@ -83,7 +103,8 @@ export const initializeExpressApp = () => {
     }
     next();
   });
-
+*/
+  /*
   app.use(async (req, res, next) => {
     const refreshToken = req.cookies["refresh-token"];
     const accessToken = req.cookies["access-token"];
@@ -124,6 +145,7 @@ export const initializeExpressApp = () => {
 
     next();
   });
+  */
 
   server.applyMiddleware({ app, path: '/graphql' });
 

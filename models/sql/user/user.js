@@ -1,7 +1,4 @@
-const { DataTypes } = require('sequelize');
-
-export default (sequelize, DataTypes) => {
-  const user = sequelize.define('user', {
+export default (sequelize, DataTypes) => sequelize.define('users', {
   uuid: {
     type: DataTypes.UUID,
     required: true,
@@ -46,5 +43,3 @@ export default (sequelize, DataTypes) => {
     type: DataTypes.DATE,
   },
 });
-return user;
-};

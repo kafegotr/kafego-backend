@@ -5,10 +5,11 @@ const typeDefs = `
 
     type User {
         uuid: ID!
-        role: String!
         email: String!
         username: String!
         password: String!
+        role: String!
+        photo: String!
         createdAt: Date
         updatedAt: Date
         deletedAt: Date
@@ -60,12 +61,11 @@ const typeDefs = `
     type Mutation {
        register(
         uuid: ID
-        role: String!
         email: String!
         username: String!
         password: String!
-        firstname: String!
-        lastname: String!
+        role: String!
+        photo: String!
         ): User!
 
         login(

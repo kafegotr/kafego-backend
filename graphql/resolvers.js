@@ -17,19 +17,18 @@ export default {
     register: async (
       parent,
       {
-        uuid, role, email, username, password, firstname, lastname,
+        uuid, email, username, password, role, photo
       },
     ) => await bcrypt.hash(password, 10, (err, hash) => {
       models.User.create({
         uuid: uuidv4().toString(),
-        role,
         email,
         username,
-        password: hash,
-        firstname,
-        lastname,
+        password: hash, 
+        role,
+        photo
       });
-      return true;
+      return uuid;
     }),
     login: async (parent, { username, password }, { res }) => {
       const user = await models.User.findOne({ where: { username } });
