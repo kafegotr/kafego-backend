@@ -5,6 +5,7 @@ const typeDefs = `
 
     type User {
         uuid: ID!
+        fullname: String!
         email: String!
         username: String!
         password: String!
@@ -16,30 +17,31 @@ const typeDefs = `
     }
 
     type Address {
-        id: ID
-        users_uuid: ID
-        post_title: String!
-        post: String!
+        id: ID!
+        city: String! 
+        county: String!
+        users_uuid: String!
         createdAt: Date
         updatedAt: Date
         deletedAt: Date
     }
 
     type Contact {
-        id: ID
-        users_uuid: ID
-        post_title: String!
-        post: String!
+        id: ID!
+        gsm: String!
+        tel: String!
+        email: String!
+        users_uuid: String! 
         createdAt: Date
         updatedAt: Date
         deletedAt: Date
     }
 
     type Fullness_percent {
-        id: ID
-        users_uuid: ID
-        post_title: String!
-        post: String!
+        id: ID!
+        percent: Int!
+        timestamp: Date!
+        users_uuid: String! 
         createdAt: Date
         updatedAt: Date
         deletedAt: Date

@@ -17,17 +17,13 @@ export default (sequelize, DataTypes) => sequelize.define('address', {
     allowNull: false,
     required: true,
   },
-  neighborhood: {
-    type: DataTypes.STRING,
-    required: true,
-    allowNull: false,
-  },
-  FK_user_uuid: {
+  users_uuid: {
     type: DataTypes.UUID,
     required: true,
     allowNull: false,
+    primaryKey: true,
     references: {
-      model: 'user',
+      model: 'users',
       key: 'uuid',
     },
   },

@@ -22,14 +22,14 @@ export const initializeExpressApp = () => {
 
   app.set('views', path.join(__dirname, ''));
   app.set('view engine', 'jade');
-  
+
   const corsOptions = {
     credentials: true,
     origin: ['http://localhost:4000',
       'http://localhost:3000',
-      'http://localhost:4000/graphql'
+      'http://localhost:4000/graphql',
     ],
-    optionsSuccessStatus: 200 
+    optionsSuccessStatus: 200,
   };
 
   app.use(cors(corsOptions));
@@ -72,7 +72,7 @@ export const initializeExpressApp = () => {
       return me;
     },
   });
-
+/*
   app.use((req, res, next) => {
     const accessToken = req.cookies['access-token'];
     try {
@@ -83,10 +83,11 @@ export const initializeExpressApp = () => {
     }
     next();
   });
-
+*/
+/*
   app.use(async (req, res, next) => {
-    const refreshToken = req.cookies["refresh-token"];
-    const accessToken = req.cookies["access-token"];
+    const refreshToken = req.cookies['refresh-token'];
+    const accessToken = req.cookies['access-token'];
     if (!refreshToken && !accessToken) {
       return next();
     }
@@ -107,7 +108,7 @@ export const initializeExpressApp = () => {
 
     try {
       data = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET);
-    } catch {
+    } catch (e) {
       return next();
     }
 
@@ -118,12 +119,13 @@ export const initializeExpressApp = () => {
 
     const tokens = createTokens(user);
 
-    res.cookie("refresh-token", tokens.refreshToken);
-    res.cookie("access-token", tokens.accessToken);
-    req.userId = user.id;
-
-    next();
+    //res.cookie('access-token', tokens.accessToken, { httpOnly: true, secure: true, maxAge: 3600000 });
+    res.cookie('refresh-token', tokens.refreshToken);
+    res.cookie('access-token', tokens.accessToken);
+    req.userId = user.uuid;
+    return next();
   });
+  */
 
   server.applyMiddleware({ app, path: '/graphql' });
 

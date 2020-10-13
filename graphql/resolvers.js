@@ -17,16 +17,16 @@ export default {
     register: async (
       parent,
       {
-        uuid, email, username, password, role, photo
+        uuid, email, username, password, role, photo,
       },
     ) => await bcrypt.hash(password, 10, (err, hash) => {
       models.User.create({
         uuid: uuidv4().toString(),
         email,
         username,
-        password: hash, 
+        password: hash,
         role,
-        photo
+        photo,
       });
       return uuid;
     }),
@@ -39,15 +39,17 @@ export default {
       if (!valid) {
         throw new Error('Incorrect password');
       }
-      const refreshToken = sign({ userId: user.uuid }, REFRESH_TOKEN_SECRET, {
+      /*
+      const refreshToken = jwt.sign({ userId: user.uuid }, REFRESH_TOKEN_SECRET, {
         expiresIn: '7d',
       });
-      const accessToken = sign({ userId: user.uuid }, ACCESS_TOKEN_SECRET, {
+      const accessToken = jwt.sign({ userId: user.uuid }, ACCESS_TOKEN_SECRET, {
         expiresIn: '15min',
       });
-
-      res.cookie('refresh-token', refreshToken);
-      res.cookie('access-token', accessToken);
+      */
+      // res.cookie('refresh-token', refreshToken);
+      // res.cookie('access-token', accessToken);
+      //res.cookie('access-token', accessToken, { httpOnly: true, maxAge: 3600000 });
 
       return user;
     },
@@ -65,7 +67,7 @@ export default {
       // res.clearCookie('access-token');
       res.clearCookie('access-token');
     },
-/*
+    /*
     postCreate: async (
       parent,
       {
@@ -89,7 +91,7 @@ export default {
         throw new Error("Not authenticated as user.");
       }
       */
-     /*
+    /*
       if (!context.userId) {
         throw new Error('Not authenticated as user.');
       }

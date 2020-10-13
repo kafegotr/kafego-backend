@@ -5,6 +5,11 @@ export default (sequelize, DataTypes) => sequelize.define('users', {
     primaryKey: true,
     allowNull: false,
   },
+  fullname: {
+    type: DataTypes.STRING,
+    required: true,
+    allowNull: false,
+  },
   email: {
     type: DataTypes.STRING,
     isEmail: true,

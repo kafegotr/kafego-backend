@@ -7,14 +7,6 @@ const models = {
   Contact: databaseConnection.import('./contact/contact'),
   Fullness_percent: databaseConnection.import('./fullness_percent/fullness_percent'),
 };
-/*
-const models = [
-  require('./user/user'),
-  require('./contact/contact'),
-  require('./fullness_percent/fullness_percent'),
-  require('./address/address'),
-];
-*/
 
 Object.keys(models).forEach((modelName) => {
   if ('associate' in models[modelName]) {
