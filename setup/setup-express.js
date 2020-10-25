@@ -24,11 +24,10 @@ export const initializeExpressApp = () => {
   app.set('view engine', 'jade');
 
   const corsOptions = {
-    credentials: true,
-    origin: ['http://localhost:4000',
+    origin: [
       'http://localhost:3000',
-      'http://localhost:4000/graphql',
     ],
+    credentials: true,
     optionsSuccessStatus: 200,
   };
 
@@ -72,7 +71,7 @@ export const initializeExpressApp = () => {
       return me;
     },
   });
-/*
+  /*
   app.use((req, res, next) => {
     const accessToken = req.cookies['access-token'];
     try {
@@ -84,7 +83,7 @@ export const initializeExpressApp = () => {
     next();
   });
 */
-/*
+  /*
   app.use(async (req, res, next) => {
     const refreshToken = req.cookies['refresh-token'];
     const accessToken = req.cookies['access-token'];
