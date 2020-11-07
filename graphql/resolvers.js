@@ -17,19 +17,43 @@ export default {
     register: async (
       parent,
       {
-        uuid, email, username, password, role, photo,
-      },
-    ) => await bcrypt.hash(password, 10, (err, hash) => {
-      models.User.create({
-        uuid: uuidv4().toString(),
-        email,
-        username,
-        password: hash,
-        role,
-        photo,
+        uuid, fullname, email, username, password, role, photo,
+        city, county,
+      }, { res },
+    ) => {
+      const user = await models.User.findOne({ where: { username } });
+      // const user = await models.User.findOne({ email, username });
+      if (user) {
+        throw new Error('User already exits');
+      }
+      const newUser = await bcrypt.hash(password, 10, (err, hash) => {
+        models.User.create({
+          uuid: uuidv4().toString(),
+          fullname,
+          email,
+          username,
+          password: hash,
+          role: 'private',
+          photo,
+        });
+        return newUser;
       });
-      return uuid;
-    }),
+    },
+    /*
+    addressRegister: async (
+      parent,
+      {
+        city, county, users_uuid,
+      }, { res },
+    ) => {
+      await models.Address.create({
+        city,
+        county,
+        users_uuid,
+      });
+      return newAddress;
+    },
+    */
     login: async (parent, { username, password }, { res }) => {
       const user = await models.User.findOne({ where: { username } });
       if (!user) {
@@ -49,7 +73,7 @@ export default {
       */
       // res.cookie('refresh-token', refreshToken);
       // res.cookie('access-token', accessToken);
-      //res.cookie('access-token', accessToken, { httpOnly: true, maxAge: 3600000 });
+      // res.cookie('access-token', accessToken, { httpOnly: true, maxAge: 3600000 });
 
       return user;
     },

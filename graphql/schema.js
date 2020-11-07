@@ -10,7 +10,7 @@ const typeDefs = `
         username: String!
         password: String!
         role: String!
-        photo: String!
+        photo: String
         createdAt: Date
         updatedAt: Date
         deletedAt: Date
@@ -18,7 +18,7 @@ const typeDefs = `
 
     type Address {
         id: ID!
-        city: String! 
+        city: String!
         county: String!
         users_uuid: String!
         createdAt: Date
@@ -31,7 +31,7 @@ const typeDefs = `
         gsm: String!
         tel: String!
         email: String!
-        users_uuid: String! 
+        users_uuid: String!
         createdAt: Date
         updatedAt: Date
         deletedAt: Date
@@ -41,7 +41,7 @@ const typeDefs = `
         id: ID!
         percent: Int!
         timestamp: Date!
-        users_uuid: String! 
+        users_uuid: String!
         createdAt: Date
         updatedAt: Date
         deletedAt: Date
@@ -55,6 +55,13 @@ const typeDefs = `
         password: String
     }
 
+    type RegisterResponse {
+        uuid: ID
+        username: String
+        password: String
+    }
+
+
     type Query {
         users: [User!]
         user(uuid: ID!): User
@@ -63,12 +70,19 @@ const typeDefs = `
     type Mutation {
        register(
         uuid: ID
+        fullname: String!
         email: String!
         username: String!
         password: String!
-        role: String!
-        photo: String!
-        ): User!
+        role: String
+        photo: String
+        ): User
+
+       addressRegister(
+        city: String
+        county: String
+        users_uuid: String
+        ): Address
 
         login(
             username: String!

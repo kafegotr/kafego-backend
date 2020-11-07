@@ -35,8 +35,6 @@ export default (sequelize, DataTypes) => sequelize.define('users', {
   },
   photo: {
     type: DataTypes.STRING,
-    required: true,
-    allowNull: false,
   },
   createdAt: {
     type: DataTypes.DATE,

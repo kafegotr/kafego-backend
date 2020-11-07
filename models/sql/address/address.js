@@ -1,4 +1,4 @@
-export default (sequelize, DataTypes) => sequelize.define('address', {
+export default (sequelize, DataTypes) => sequelize.define('addresses', {
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,

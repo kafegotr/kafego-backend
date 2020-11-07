@@ -8,17 +8,22 @@ const models = {
   Fullness_percent: databaseConnection.import('./fullness_percent/fullness_percent'),
 };
 
+/*
+for (const modelDefiner of models) {
+  modelDefiner(databaseConnection);
+}
+*/
+
+models.Address.belongsTo(models.User, { foreignKey: 'users_uuid', as: 'users' });
+models.Contact.belongsTo(models.User, { foreignKey: 'users_uuid', as: 'users' });
+models.Fullness_percent.belongsTo(models.User, { foreignKey: 'users_uuid', as: 'users' });
+
 Object.keys(models).forEach((modelName) => {
   if ('associate' in models[modelName]) {
     models[modelName].associate(models);
   }
 });
 
-/*
-for (const modelDefiner of models) {
-  modelDefiner(databaseConnection);
-}
-*/
 
 models.sequelize = databaseConnection;
 models.Sequelize = Sequelize;
