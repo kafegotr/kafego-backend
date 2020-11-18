@@ -63,22 +63,21 @@ export default {
       if (!valid) {
         throw new Error('Incorrect password');
       }
-      /*
       const refreshToken = jwt.sign({ userId: user.uuid }, REFRESH_TOKEN_SECRET, {
         expiresIn: '7d',
       });
+      const token = jwt.sign({ username, password }, 'supersecret');
       const accessToken = jwt.sign({ userId: user.uuid }, ACCESS_TOKEN_SECRET, {
         expiresIn: '15min',
       });
-      */
-      // res.cookie('refresh-token', refreshToken);
-      // res.cookie('access-token', accessToken);
-      // res.cookie('access-token', accessToken, { httpOnly: true, maxAge: 3600000 });
-
+      res.cookie('token', token, { maxAge: 60 * 60 * 24 * 7, httpOnly: true });
+      res.cookie('refresh-token', refreshToken, { maxAge: 60 * 60 * 24 * 7, httpOnly: true });
+      // res.cookie('access-token', token, { httpOnly: true, maxAge: 3600000 });
+      // res.cookie('refresh-token', refreshToken, { httpOnly: true, maxAge: 3600000 });
       return user;
     },
 
-    logout: async (parent, { res }) => {
+    logout: async (parent, { res, req }) => {
       // res.cookie.set('access-token', { expires: Date.now() });
       // req.logout();
       /*
@@ -88,8 +87,9 @@ export default {
       });
       */
       // res.cookie.set('access-token', { expires: Date.now() });
-      // res.clearCookie('access-token');
-      res.clearCookie('access-token');
+      // res.cookie('token', { maxAge: Date.now(), httpOnly: true });
+      res.clearCookie('token', { maxAge: Date.now(), httpOnly: true });
+      return true;
     },
     /*
     postCreate: async (

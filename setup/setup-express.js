@@ -24,9 +24,7 @@ export const initializeExpressApp = () => {
   app.set('view engine', 'jade');
 
   const corsOptions = {
-    origin: [
-      'http://localhost:3000',
-    ],
+    origin: 'http://localhost:3000',
     credentials: true,
     optionsSuccessStatus: 200,
   };
@@ -68,10 +66,14 @@ export const initializeExpressApp = () => {
     resolvers,
     context: async ({ req, res }) => {
       const me = getMe(req);
-      return me;
+      return {
+        me,
+        res,
+        logout: () => req.logout(),
+      };
     },
   });
-  /*
+    /*
   app.use((req, res, next) => {
     const accessToken = req.cookies['access-token'];
     try {
@@ -82,8 +84,8 @@ export const initializeExpressApp = () => {
     }
     next();
   });
-*/
-  /*
+
+
   app.use(async (req, res, next) => {
     const refreshToken = req.cookies['refresh-token'];
     const accessToken = req.cookies['access-token'];
@@ -115,18 +117,19 @@ export const initializeExpressApp = () => {
     if (!user) {
       return next();
     }
-
+    */
+  /*
     const tokens = createTokens(user);
 
-    //res.cookie('access-token', tokens.accessToken, { httpOnly: true, secure: true, maxAge: 3600000 });
     res.cookie('refresh-token', tokens.refreshToken);
     res.cookie('access-token', tokens.accessToken);
     req.userId = user.uuid;
     return next();
   });
-  */
+    */
 
-  server.applyMiddleware({ app, path: '/graphql' });
+
+  server.applyMiddleware({ app, cors: { credentials: true, origin: 'http://localhost:3000' }, path: '/graphql' });
 
   return app;
 };
