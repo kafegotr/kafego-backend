@@ -69,6 +69,7 @@ export const initializeExpressApp = () => {
       return {
         me,
         res,
+        req,
         logout: () => req.logout(),
       };
     },

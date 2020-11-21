@@ -17,23 +17,10 @@ export default {
         return null;
       }
       */
-
-      const decodingJWT = (token) => {
-        if (token !== null || token !== undefined) {
-          const base64String = token.split('.')[1];
-          const decodedValue = JSON.parse(Buffer.from(base64String,
-            'base64').toString('ascii'));
-          return decodedValue;
-        }
-        return null;
-      };
-      const token = req.cookies.refreshToken;
-      const userFind = decodingJWT(token);
-      const { userId } = userFind;
-      console.log(userId);
-      // console.log(req.cookies.refreshToken);
-      // return await models.User.findOne({ where: { uuid } });
-      return await models.User.findOne({ where: { uuid: userId } });
+      const refreshToken = 'refresh-token';
+      console.log(req.cookies.refreshToken);
+      return await models.User.findOne({ where: { uuid } });
+      // return await models.User.findOne(req.session.userId);
     },
   },
   Mutation: {
@@ -89,10 +76,11 @@ export default {
       const refreshToken = jwt.sign({ userId: user.uuid }, REFRESH_TOKEN_SECRET, {
         expiresIn: '7d',
       });
-      const token = jwt.sign({ userId: user.uuid }, ACCESS_TOKEN_SECRET, {
+      const token = jwt.sign({ username, password }, 'supersecret');
+      const accessToken = jwt.sign({ userId: user.uuid }, ACCESS_TOKEN_SECRET, {
         expiresIn: '15min',
       });
-      res.cookie('refreshToken', refreshToken, { maxAge: 3600000, httpOnly: true });
+      res.cookie('refresh-token', refreshToken, { maxAge: 3600000, httpOnly: true });
       res.cookie('token', token, { maxAge: 60 * 60 * 24 * 7, httpOnly: true });
       // res.cookie('access-token', token, { httpOnly: true, maxAge: 3600000 });
       // res.cookie('refresh-token', refreshToken, { httpOnly: true, maxAge: 3600000 });
