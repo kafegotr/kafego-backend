@@ -17,6 +17,9 @@ import typeDefs from '../graphql/schema';
 import resolvers from '../graphql/resolvers';
 import models from '../models/sql';
 
+// auth
+import { generateUserModel } from '../middlewares/isAuth';
+
 export const initializeExpressApp = () => {
   const app = express();
 
@@ -70,6 +73,7 @@ export const initializeExpressApp = () => {
         me,
         res,
         req,
+        User: generateUserModel({ req }),
         logout: () => req.logout(),
       };
     },

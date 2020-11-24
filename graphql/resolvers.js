@@ -10,30 +10,48 @@ import isAuth from '../middlewares/auth';
 
 export default {
   Query: {
+    token: async (parent, { uuid }, { req }) => {
+      const { refreshToken, token } = req.cookies;
+      return {
+        token,
+        refreshToken,
+      };
+    },
     users: async () => await models.User.findAll(),
     user: async (parent, { uuid }, { req }) => {
-      /*
-      if (!req.session.userId) {
-        return null;
-      }
-      */
-
       const decodingJWT = (token) => {
         if (token !== null || token !== undefined) {
           const base64String = token.split('.')[1];
+          console.log(base64String);
           const decodedValue = JSON.parse(Buffer.from(base64String,
             'base64').toString('ascii'));
           return decodedValue;
         }
         return null;
       };
+
       const token = req.cookies.refreshToken;
-      const userFind = decodingJWT(token);
-      const { userId } = userFind;
-      console.log(userId);
-      // console.log(req.cookies.refreshToken);
-      // return await models.User.findOne({ where: { uuid } });
-      return await models.User.findOne({ where: { uuid: userId } });
+      console.log(`T${token}`);
+      try {
+        const userFind = decodingJWT(token);
+        const { userId } = userFind;
+        return await models.User.findOne({ where: { uuid: userId } });
+      } catch (err) {
+        throw new Error(err);
+      }
+
+
+      /*
+      try {
+        const token = req.cookies.refreshToken;
+        const userFind = decodingJWT(token);
+        const { userId } = userFind;
+        return await models.User.findOne({ where: { uuid: userId } });
+      } catch (err) {
+        console.log(err);
+        throw new Error('Not authenticated');
+      }
+      */
     },
   },
   Mutation: {

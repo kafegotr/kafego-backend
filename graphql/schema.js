@@ -52,7 +52,17 @@ const typeDefs = `
         email: String
         role: String
         username: String
+    }
+
+    type TokenResponse {
+        uuid: ID
+        email: String
+        role: String
+        username: String
         password: String
+        ok: Boolean
+        token: String
+        refreshToken: String
     }
 
     type RegisterResponse {
@@ -65,6 +75,7 @@ const typeDefs = `
     type Query {
         users: [User!]
         user: User
+        token: TokenResponse
     }
 
     type Mutation {
@@ -87,7 +98,7 @@ const typeDefs = `
         login(
             username: String!
             password: String!
-        ): LoginResponse!
+        ): LoginResponse
 
         logout: Boolean
 
