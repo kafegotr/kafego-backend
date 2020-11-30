@@ -27,7 +27,10 @@ export const initializeExpressApp = () => {
   app.set('view engine', 'jade');
 
   const corsOptions = {
-    origin: 'http://localhost:3000',
+    origin: [
+      'http://localhost:3000',
+      'http://localhost:3001',
+    ],
     credentials: true,
     optionsSuccessStatus: 200,
   };
@@ -74,7 +77,6 @@ export const initializeExpressApp = () => {
         res,
         req,
         User: generateUserModel({ req }),
-        logout: () => req.logout(),
       };
     },
   });
@@ -134,7 +136,17 @@ export const initializeExpressApp = () => {
     */
 
 
-  server.applyMiddleware({ app, cors: { credentials: true, origin: 'http://localhost:3000' }, path: '/graphql' });
+  server.applyMiddleware({
+    app,
+    cors: {
+      credentials: true,
+      origin: [
+        'http://localhost:3000',
+        'http://localhost:3001',
+      ],
+    },
+    path: '/graphql',
+  });
 
   return app;
 };

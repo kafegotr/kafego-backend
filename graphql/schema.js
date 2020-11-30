@@ -52,17 +52,14 @@ const typeDefs = `
         email: String
         role: String
         username: String
+        ok: Boolean
     }
 
     type TokenResponse {
-        uuid: ID
-        email: String
-        role: String
-        username: String
-        password: String
-        ok: Boolean
         token: String
         refreshToken: String
+        ok: String
+        userRole: String
     }
 
     type RegisterResponse {
@@ -96,6 +93,11 @@ const typeDefs = `
         ): Address
 
         login(
+            username: String!
+            password: String!
+        ): LoginResponse
+
+        loginBusiness(
             username: String!
             password: String!
         ): LoginResponse

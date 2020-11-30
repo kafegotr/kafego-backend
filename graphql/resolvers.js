@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import jwt, { sign } from 'jsonwebtoken';
 import { ApolloServer, AuthenticationError } from 'apollo-server-express';
 import slugify from 'slugify';
+import jwt_decode from 'jwt-decode';
 import models from '../models/sql';
 import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from './constants';
 import isAuth from '../middlewares/auth';
@@ -12,32 +13,44 @@ export default {
   Query: {
     token: async (parent, { uuid }, { req }) => {
       const { refreshToken, token } = req.cookies;
+      let ok;
+      if (refreshToken == null) ok = false;
+      ok = true;
+      if (refreshToken) {
+        const userFind = jwt_decode(refreshToken);
+        const { userRole } = userFind;
+        return {
+          token,
+          refreshToken,
+          ok,
+          userRole,
+        };
+      }
       return {
         token,
         refreshToken,
+        ok,
+        userRole: 'null',
       };
     },
     users: async () => await models.User.findAll(),
     user: async (parent, { uuid }, { req }) => {
+      /*
       const decodingJWT = (token) => {
         if (token !== null || token !== undefined) {
           const base64String = token.split('.')[1];
-          console.log(base64String);
           const decodedValue = JSON.parse(Buffer.from(base64String,
             'base64').toString('ascii'));
           return decodedValue;
         }
-        return null;
+        return 'false';
       };
-
+      */
       const token = req.cookies.refreshToken;
-      console.log(`T${token}`);
-      try {
-        const userFind = decodingJWT(token);
-        const { userId } = userFind;
-        return await models.User.findOne({ where: { uuid: userId } });
-      } catch (err) {
-        throw new Error(err);
+      if (token) {
+        const userFind = jwt_decode(token);
+        const { userId, userRole } = userFind;
+        return await models.User.findOne({ where: { uuid: userId, role: userRole } });
       }
 
 
@@ -97,38 +110,65 @@ export default {
     */
     login: async (parent, { username, password }, { res }) => {
       const user = await models.User.findOne({ where: { username } });
-      if (!user) {
+      const { dataValues } = user;
+      const roleStatus = dataValues.role;
+      if (!user || roleStatus === 'business') {
         throw new Error('No user with username');
       }
       const valid = bcrypt.compareSync(password, user.password);
       if (!valid) {
         throw new Error('Incorrect password');
       }
-      const refreshToken = jwt.sign({ userId: user.uuid }, REFRESH_TOKEN_SECRET, {
-        expiresIn: '7d',
-      });
+      const refreshToken = jwt.sign({ userId: user.uuid, userRole: user.role },
+        REFRESH_TOKEN_SECRET, {
+          expiresIn: '7d',
+        });
       const token = jwt.sign({ userId: user.uuid }, ACCESS_TOKEN_SECRET, {
         expiresIn: '15min',
       });
-      res.cookie('refreshToken', refreshToken, { maxAge: 3600000, httpOnly: true });
+      res.cookie('refreshToken', refreshToken, { maxAge: 36000000, httpOnly: true });
       res.cookie('token', token, { maxAge: 60 * 60 * 24 * 7, httpOnly: true });
+      let ok;
+      if (refreshToken == null) ok = false;
+      ok = true;
       // res.cookie('access-token', token, { httpOnly: true, maxAge: 3600000 });
       // res.cookie('refresh-token', refreshToken, { httpOnly: true, maxAge: 3600000 });
-      return user;
+      return {
+        user,
+        ok,
+      };
     },
-
-    logout: async (parent, { res, req }) => {
-      // res.cookie.set('access-token', { expires: Date.now() });
-      // req.logout();
-      /*
-      jwt.verify(token, ACCESS_TOKEN_SECRET, (err, decoded) => {
-        if (err) console.log(err);
-        return res.clearCookie('access-token');
+    loginBusiness: async (parent, { username, password }, { res }) => {
+      const user = await models.User.findOne({ where: { username } });
+      const { dataValues } = user;
+      const roleStatus = dataValues.role;
+      if (!user || roleStatus === 'private') {
+        throw new Error('No user with username');
+      }
+      const valid = bcrypt.compareSync(password, user.password);
+      if (!valid) {
+        throw new Error('Incorrect password');
+      }
+      const refreshToken = jwt.sign({ userId: user.uuid, userRole: user.role },
+        REFRESH_TOKEN_SECRET, {
+          expiresIn: '7d',
+        });
+      const token = jwt.sign({ userId: user.uuid }, ACCESS_TOKEN_SECRET, {
+        expiresIn: '15min',
       });
-      */
-      // res.cookie.set('access-token', { expires: Date.now() });
-      // res.cookie('token', { maxAge: Date.now(), httpOnly: true });
-      res.clearCookie('token', { maxAge: Date.now(), httpOnly: true });
+      res.cookie('refreshToken', refreshToken, { maxAge: 36000000, httpOnly: true });
+      res.cookie('token', token, { maxAge: 60 * 60 * 24 * 7, httpOnly: true });
+      let ok;
+      if (refreshToken == null) ok = false;
+      ok = true;
+      return {
+        user,
+        ok,
+      };
+    },
+    logout: async (parent, { uuid }, { res, req }) => {
+      const { refreshToken, token } = req.cookies;
+      res.cookie('refreshToken', refreshToken, { maxAge: 0, httpOnly: true });
       return true;
     },
     /*
