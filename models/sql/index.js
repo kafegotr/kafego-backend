@@ -6,6 +6,7 @@ const models = {
   Address: databaseConnection.import('./address/address'),
   Contact: databaseConnection.import('./contact/contact'),
   Fullness_percent: databaseConnection.import('./fullness_percent/fullness_percent'),
+  City_County: databaseConnection.import('./city_counties/city_counties'),
 };
 
 /*

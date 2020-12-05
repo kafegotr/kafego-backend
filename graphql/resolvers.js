@@ -33,38 +33,24 @@ export default {
         userRole: 'null',
       };
     },
+    addresses: async (parent, { uuid }, { req }) => {
+      const { refreshToken, token } = req.cookies;
+      if (refreshToken) {
+        const userFind = jwt_decode(refreshToken);
+        const { userId } = userFind;
+        return await models.Address.findOne({ where: { users_uuid: userId } });
+      }
+      return null;
+    },
     users: async () => await models.User.findAll(),
+    city_county: async () => await models.City_County.findAll(),
     user: async (parent, { uuid }, { req }) => {
-      /*
-      const decodingJWT = (token) => {
-        if (token !== null || token !== undefined) {
-          const base64String = token.split('.')[1];
-          const decodedValue = JSON.parse(Buffer.from(base64String,
-            'base64').toString('ascii'));
-          return decodedValue;
-        }
-        return 'false';
-      };
-      */
       const token = req.cookies.refreshToken;
       if (token) {
         const userFind = jwt_decode(token);
         const { userId, userRole } = userFind;
         return await models.User.findOne({ where: { uuid: userId, role: userRole } });
       }
-
-
-      /*
-      try {
-        const token = req.cookies.refreshToken;
-        const userFind = decodingJWT(token);
-        const { userId } = userFind;
-        return await models.User.findOne({ where: { uuid: userId } });
-      } catch (err) {
-        console.log(err);
-        throw new Error('Not authenticated');
-      }
-      */
     },
   },
   Mutation: {
@@ -72,42 +58,60 @@ export default {
       parent,
       {
         uuid, fullname, email, username, password, role, photo,
-        city, county,
       }, { res },
     ) => {
-      const user = await models.User.findOne({ where: { username } });
-      // const user = await models.User.findOne({ email, username });
-      if (user) {
-        throw new Error('User already exits');
-      }
-      const newUser = await bcrypt.hash(password, 10, (err, hash) => {
-        models.User.create({
-          uuid: uuidv4().toString(),
-          fullname,
-          email,
-          username,
-          password: hash,
-          role: 'private',
-          photo,
+      try {
+        const user = await models.User.findOne({ where: { username } });
+        if (user) {
+          throw new Error('User already exits');
+        }
+        const newUser = await bcrypt.hash(password, 10, (err, hash) => {
+          models.User.create({
+            uuid: uuidv4().toString(),
+            fullname,
+            email,
+            username,
+            password: hash,
+            role: 'private',
+            photo,
+          });
+          return newUser;
         });
-        return newUser;
-      });
+      } catch (err) {
+        console.log(err);
+      }
     },
-    /*
     addressRegister: async (
       parent,
       {
-        city, county, users_uuid,
-      }, { res },
+        city, county, user_uuid,
+      }, { res, req },
     ) => {
-      await models.Address.create({
-        city,
-        county,
-        users_uuid,
-      });
-      return newAddress;
+      const token = req.cookies.refreshToken;
+      if (token) {
+        const userFind = jwt_decode(token);
+        const { userId, userRole } = userFind;
+        const users_uuid = userId;
+        const isControl = await models.Address.findOne({ where: { users_uuid } });
+        if (isControl) {
+          const cities = city;
+          const counties = county;
+          const values = { city: cities, county: counties };
+          const selector = {
+            where: { users_uuid: userId },
+          };
+          return await models.Address.update(values, selector)
+            .then(() => {
+            });
+        }
+        return await models.Address.create({
+          city,
+          county,
+          users_uuid: userId,
+        });
+        return newAddress;
+      }
     },
-    */
     login: async (parent, { username, password }, { res }) => {
       const user = await models.User.findOne({ where: { username } });
       const { dataValues } = user;

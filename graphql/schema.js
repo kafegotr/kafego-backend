@@ -17,10 +17,10 @@ const typeDefs = `
     }
 
     type Address {
-        id: ID!
-        city: String!
-        county: String!
-        users_uuid: String!
+        id: ID
+        city: String
+        county: String
+        users_uuid: String
         createdAt: Date
         updatedAt: Date
         deletedAt: Date
@@ -47,6 +47,16 @@ const typeDefs = `
         deletedAt: Date
     }
 
+    type City_County {
+        id: ID
+        city: String
+        county: String
+        plate: Int
+        createdAt: Date
+        updatedAt: Date
+        deletedAt: Date
+    }
+
     type LoginResponse {
         uuid: ID
         email: String
@@ -62,17 +72,12 @@ const typeDefs = `
         userRole: String
     }
 
-    type RegisterResponse {
-        uuid: ID
-        username: String
-        password: String
-    }
-
-
     type Query {
         users: [User!]
         user: User
         token: TokenResponse
+        city_county: [City_County]
+        addresses: Address
     }
 
     type Mutation {
@@ -89,7 +94,7 @@ const typeDefs = `
        addressRegister(
         city: String
         county: String
-        users_uuid: String
+        user_uuid: String
         ): Address
 
         login(
