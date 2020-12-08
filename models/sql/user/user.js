@@ -45,4 +45,13 @@ export default (sequelize, DataTypes) => sequelize.define('users', {
   deletedAt: {
     type: DataTypes.DATE,
   },
+  menu: {
+    type: DataTypes.STRING,
+  },
+  campaigns: {
+    type: DataTypes.STRING,
+  },
+  address_direct: {
+    type: DataTypes.STRING,
+  },
 });

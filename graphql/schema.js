@@ -11,6 +11,9 @@ const typeDefs = `
         password: String!
         role: String!
         photo: String
+        menu: String
+        campaigns: String
+        address_direct: String
         createdAt: Date
         updatedAt: Date
         deletedAt: Date
@@ -26,6 +29,12 @@ const typeDefs = `
         deletedAt: Date
     }
 
+    type Menu {
+        menu: String
+        campaigns: String
+        users_uuid: String
+    }
+
     type Contact {
         id: ID!
         gsm: String!
@@ -39,19 +48,8 @@ const typeDefs = `
 
     type Fullness_percent {
         id: ID!
-        percent: Int!
-        timestamp: Date!
-        users_uuid: String!
-        createdAt: Date
-        updatedAt: Date
-        deletedAt: Date
-    }
-
-    type City_County {
-        id: ID
-        city: String
-        county: String
-        plate: Int
+        percent: String
+        users_uuid: String
         createdAt: Date
         updatedAt: Date
         deletedAt: Date
@@ -76,8 +74,10 @@ const typeDefs = `
         users: [User!]
         user: User
         token: TokenResponse
-        city_county: [City_County]
         addresses: Address
+        allAddresses: [Address]
+        fullness_percent: Fullness_percent
+        all_fullness_percent: [Fullness_percent]
     }
 
     type Mutation {
@@ -96,6 +96,18 @@ const typeDefs = `
         county: String
         user_uuid: String
         ): Address
+
+       menuRegister(
+        menu: String
+        campaigns: String
+        user_uuid: String
+        ): Menu
+
+       fullnessPercentUpdate (
+        id: ID
+        percent: String
+        user_uuid: String
+        ): Fullness_percent
 
         login(
             username: String!

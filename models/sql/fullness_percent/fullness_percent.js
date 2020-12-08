@@ -1,4 +1,4 @@
-export default (sequelize, DataTypes) => sequelize.define('fullness_percent', {
+export default (sequelize, DataTypes) => sequelize.define('fullness-percents', {
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
@@ -7,12 +7,7 @@ export default (sequelize, DataTypes) => sequelize.define('fullness_percent', {
     required: true,
   },
   percent: {
-    type: DataTypes.INTEGER,
-    required: true,
-    allowNull: false,
-  },
-  timestamp: {
-    type: DataTypes.DATE,
+    type: DataTypes.STRING,
     required: true,
     allowNull: false,
   },

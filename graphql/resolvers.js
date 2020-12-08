@@ -38,12 +38,15 @@ export default {
       if (refreshToken) {
         const userFind = jwt_decode(refreshToken);
         const { userId } = userFind;
+        // const addressQuery = await models.Address.findOne({ where: { users_uuid: userId } });
+        // const userQuery = await models.User.findOne({ where: { uuid: userId } });
         return await models.Address.findOne({ where: { users_uuid: userId } });
       }
       return null;
     },
     users: async () => await models.User.findAll(),
-    city_county: async () => await models.City_County.findAll(),
+    allAddresses: async () => await models.Address.findAll(),
+    all_fullness_percent: async () => await models.Fullness_percent.findAll(),
     user: async (parent, { uuid }, { req }) => {
       const token = req.cookies.refreshToken;
       if (token) {
@@ -52,12 +55,20 @@ export default {
         return await models.User.findOne({ where: { uuid: userId, role: userRole } });
       }
     },
+    fullness_percent: async (parent, { uuid }, { req }) => {
+      const token = req.cookies.refreshToken;
+      if (token) {
+        const userFind = jwt_decode(token);
+        const { userId, userRole } = userFind;
+        return await models.Fullness_percent.findOne({ where: { users_uuid: userId } });
+      }
+    },
   },
   Mutation: {
     register: async (
       parent,
       {
-        uuid, fullname, email, username, password, role, photo,
+        uuid, fullname, email, username, password, role, photo, menu, campaigns,
       }, { res },
     ) => {
       try {
@@ -74,6 +85,8 @@ export default {
             password: hash,
             role: 'private',
             photo,
+            menu,
+            campaigns,
           });
           return newUser;
         });
@@ -109,8 +122,38 @@ export default {
           county,
           users_uuid: userId,
         });
-        return newAddress;
       }
+      return newAddress;
+    },
+    fullnessPercentUpdate: async (
+      parent,
+      {
+        id, percent, user_uuid,
+      }, { res, req },
+    ) => {
+      const token = req.cookies.refreshToken;
+      if (token) {
+        const userFind = jwt_decode(token);
+        const { userId, userRole } = userFind;
+        const users_uuid = userId;
+        const isControl = await models.Fullness_percent.findOne({ where: { users_uuid } });
+        console.log(isControl);
+        if (isControl) {
+          const percents = percent;
+          const values = { percent: percents };
+          const selector = {
+            where: { users_uuid: userId },
+          };
+          return await models.Fullness_percent.update(values, selector)
+            .then(() => {
+            });
+        }
+        return await models.Fullness_percent.create({
+          percent,
+          users_uuid: userId,
+        });
+      }
+      return fullnessPercent;
     },
     login: async (parent, { username, password }, { res }) => {
       const user = await models.User.findOne({ where: { username } });
@@ -174,6 +217,45 @@ export default {
       const { refreshToken, token } = req.cookies;
       res.cookie('refreshToken', refreshToken, { maxAge: 0, httpOnly: true });
       return true;
+    },
+    menuRegister: async (
+      parent,
+      {
+        menu, campaigns, user_uuid,
+      }, { res, req },
+    ) => {
+      const token = req.cookies.refreshToken;
+      if (token) {
+        const userFind = jwt_decode(token);
+        const { userId, userRole } = userFind;
+        // const users_uuid = userId;
+        /*
+        const isControl = await models.Address.findOne({ where: { users_uuid } });
+        if (isControl) {
+          const cities = city;
+          const counties = county;
+          const values = { city: cities, county: counties };
+          const selector = {
+            where: { users_uuid: userId },
+        return await models.Address.create({
+          city,
+          county,
+          users_uuid: userId,
+        });
+        }
+          } */
+        const menus = menu;
+        const campaignss = campaigns;
+        const values = { menu: menus, campaigns: campaignss };
+        const selector = {
+          where: { uuid: userId },
+        };
+        return await models.User.update(values, selector)
+          .then(() => {
+            console.log('Menu changed');
+          });
+      }
+      return menuRegister;
     },
     /*
     postCreate: async (
