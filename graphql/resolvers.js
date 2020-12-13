@@ -38,8 +38,6 @@ export default {
       if (refreshToken) {
         const userFind = jwt_decode(refreshToken);
         const { userId } = userFind;
-        // const addressQuery = await models.Address.findOne({ where: { users_uuid: userId } });
-        // const userQuery = await models.User.findOne({ where: { uuid: userId } });
         return await models.Address.findOne({ where: { users_uuid: userId } });
       }
       return null;
@@ -118,8 +116,8 @@ export default {
             });
         }
         return await models.Address.create({
-          city,
-          county,
+          city: 'İstanbul',
+          county: 'Beşiktaş',
           users_uuid: userId,
         });
       }
@@ -178,8 +176,6 @@ export default {
       let ok;
       if (refreshToken == null) ok = false;
       ok = true;
-      // res.cookie('access-token', token, { httpOnly: true, maxAge: 3600000 });
-      // res.cookie('refresh-token', refreshToken, { httpOnly: true, maxAge: 3600000 });
       return {
         user,
         ok,
@@ -228,22 +224,6 @@ export default {
       if (token) {
         const userFind = jwt_decode(token);
         const { userId, userRole } = userFind;
-        // const users_uuid = userId;
-        /*
-        const isControl = await models.Address.findOne({ where: { users_uuid } });
-        if (isControl) {
-          const cities = city;
-          const counties = county;
-          const values = { city: cities, county: counties };
-          const selector = {
-            where: { users_uuid: userId },
-        return await models.Address.create({
-          city,
-          county,
-          users_uuid: userId,
-        });
-        }
-          } */
         const menus = menu;
         const campaignss = campaigns;
         const values = { menu: menus, campaigns: campaignss };
@@ -257,53 +237,5 @@ export default {
       }
       return menuRegister;
     },
-    /*
-    postCreate: async (
-      parent,
-      {
-        id, users_uuid, post_title, post,
-      },
-      context,
-      // { req, session, me }
-    ) => {
-      console.log(context.userId);
-      /*
-      let validateToken;
-      const token = context.cookies["refresh-token"];
-      if (token) {
-        try {
-          return validateToken = await jwt.verify(token, REFRESH_TOKEN_SECRET);
-        } catch (e) {
-          throw new AuthenticationError("Your session expired. Sign in again.");
-        }
-      }
-      if (!validateToken) {
-        throw new Error("Not authenticated as user.");
-      }
-      */
-    /*
-      if (!context.userId) {
-        throw new Error('Not authenticated as user.');
-      }
-      return await models.Post.create({
-        id,
-        users_uuid,
-        post_title,
-        post,
-      });
-    },
-    postCreated: async (
-      parent,
-      {
-        id, users_uuid, post_title, post,
-      },
-      { req, session, me },
-    ) => await models.Post.create({
-      id,
-      users_uuid,
-      post_title,
-      post,
-    }),
-    */
   },
 };

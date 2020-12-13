@@ -80,61 +80,6 @@ export const initializeExpressApp = () => {
       };
     },
   });
-    /*
-  app.use((req, res, next) => {
-    const accessToken = req.cookies['access-token'];
-    try {
-      const data = verify(accessToken, ACCESS_TOKEN_SECRET);
-      (req).userId = data.userId;
-    } catch (err) {
-      console.log(err);
-    }
-    next();
-  });
-
-
-  app.use(async (req, res, next) => {
-    const refreshToken = req.cookies['refresh-token'];
-    const accessToken = req.cookies['access-token'];
-    if (!refreshToken && !accessToken) {
-      return next();
-    }
-
-    try {
-      const data = jwt.verify(accessToken, ACCESS_TOKEN_SECRET);
-      req.userId = data.userId;
-      return next();
-    } catch (err) {
-      console.log(err);
-    }
-
-    if (!refreshToken) {
-      return next();
-    }
-
-    let data;
-
-    try {
-      data = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET);
-    } catch (e) {
-      return next();
-    }
-
-    const user = await models.User.findOne({ where: { uuid } });
-    if (!user) {
-      return next();
-    }
-    */
-  /*
-    const tokens = createTokens(user);
-
-    res.cookie('refresh-token', tokens.refreshToken);
-    res.cookie('access-token', tokens.accessToken);
-    req.userId = user.uuid;
-    return next();
-  });
-    */
-
 
   server.applyMiddleware({
     app,

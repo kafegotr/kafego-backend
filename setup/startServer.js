@@ -23,7 +23,7 @@ export default (server) => {
       });
     })
     .catch(() => {
-      console.error('ERROR - Unable to sync database.');
-      console.error('ERROR - Server not started.');
+      console.error('START - Sync database.');
+      console.error('START - Server.');
     });
 };
