@@ -82,7 +82,7 @@ export default {
             username,
             password: hash,
             role: 'private',
-            photo,
+            photo: 'https://discord.com/channels/@me/782640583981924353/792404826523697172',
             menu,
             campaigns,
           });
